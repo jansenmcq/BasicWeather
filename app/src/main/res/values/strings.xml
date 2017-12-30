@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BasicWeather</string>
+    <string name="action_settings">Settings</string>
+    <string name="state">State</string>
+    <string name="city">City</string>
+    <string name="find_weather">Find weather</string>
+    <string name="find_weather_state_error">There is no state by that name. Please use the autocomplete function to select a viable state.</string>
+    <string name="api_key">API_KEY_GOES_HERE</string>
+</resources>
