@@ -80,16 +80,17 @@ public class WeatherActivity extends AppCompatActivity {
 
     public void findWeather(View view) {
         Intent intent = new Intent(this, WeatherDisplay.class);
-        AutoCompleteTextView stateInput = (AutoCompleteTextView) findViewById(R.id.stateInput);
-        EditText cityInput = (EditText) findViewById(R.id.cityInput);
+        AutoCompleteTextView stateInput = findViewById(R.id.stateInput);
+        EditText cityInput = findViewById(R.id.cityInput);
         String state = stateInput.getText().toString();
         String city = cityInput.getText().toString();
         String stateCode;
         try {
             stateCode = this.stateData.getString(state);
         } catch (JSONException ex) {
-            TextView errorMessage = (TextView) findViewById(R.id.errorMessage);
+            TextView errorMessage = findViewById(R.id.errorMessage);
             errorMessage.setText(R.string.find_weather_state_error);
+            ex.printStackTrace();
             return;
         }
         intent.putExtra("state_code", stateCode);

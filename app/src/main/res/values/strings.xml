@@ -5,5 +5,7 @@
     <string name="city">City</string>
     <string name="find_weather">Find weather</string>
     <string name="find_weather_state_error">There is no state by that name. Please use the autocomplete function to select a viable state.</string>
-    <string name="api_key">API_KEY_GOES_HERE</string>
+    <string name="todays_weather">Today\'s weather</string>
+    <string name="see_forecast">See Forecast</string>
+    <string name="api_key">API_KEY_HERE</string>
 </resources>
