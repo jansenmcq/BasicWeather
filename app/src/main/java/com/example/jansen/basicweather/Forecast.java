@@ -9,9 +9,6 @@ import org.json.JSONObject;
 
 public class Forecast extends AppCompatActivity {
 
-    String day1Name, day2Name, day3Name;
-    String day1Description, day2Description, day3Description;
-    String day1Temperature, day2Temperature, day3Temperature;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +16,9 @@ public class Forecast extends AppCompatActivity {
         setContentView(R.layout.activity_forecast);
 
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
+        //what are we doing here??
+        //TODO: Either implement these classes as parcelable, or store them and retrieve them in internal storage.
+//        WeatherDayData[] forecast = intent.getParcelableArrayExtra("forecast_data");
 //        try {
 //        } catch (JSONException ex)  {
 //

@@ -20,6 +20,7 @@ import java.net.URL;
 
 public class WeatherDisplay extends AppCompatActivity {
 
+    private WeatherData weatherData;
     private JSONObject[] threeDayForecast;
     private String weatherLocation;
     private String weatherDescription;
@@ -36,6 +37,7 @@ public class WeatherDisplay extends AppCompatActivity {
         String city = intent.getStringExtra("city_name");
         city = city.replace(' ', '_');
         String apiKey = this.getString(R.string.api_key);
+        this.weatherData = new WeatherData();
         URL url;
         try {
             url = new URL(WEATHER_API + apiKey + "/forecast/geolookup/conditions/q/" + stateCode + "/" + city + ".json");
@@ -43,17 +45,23 @@ public class WeatherDisplay extends AppCompatActivity {
             url = null;
             ex.printStackTrace();
         }
-        new FetchWeather().execute(url);
+        new FetchWeather(this.weatherData).execute(url);
     }
 
     public void displayForecast(View view) {
         Intent showForecast = new Intent(this, WeatherDisplay.class);
-        showForecast.putExtra("forecast_data", threeDayForecast);
+        showForecast.putExtra("forecast_data", weatherData.getThreeDayForecast());
 
         startActivity(showForecast);
     }
 
     private class FetchWeather extends AsyncTask<URL, Void, JSONObject> {
+
+        private WeatherData weatherDataReference;
+
+        public FetchWeather(WeatherData weatherDataReference) {
+            this.weatherDataReference = weatherDataReference;
+        }
 
         @Override
         protected JSONObject doInBackground(URL... urls) {
@@ -99,31 +107,46 @@ public class WeatherDisplay extends AppCompatActivity {
                 }
                 JSONObject currentObservation = weatherJSON.getJSONObject("current_observation");
                 JSONObject observedLocation = currentObservation.getJSONObject("display_location");
-                weatherLocation = observedLocation.getString("full");
-                weatherDescription = currentObservation.getString("weather");
-                currentTemperature = currentObservation.getString("temperature_string");
+                this.weatherDataReference.setLocation(observedLocation.getString("full"));
+                WeatherDayData today = new WeatherDayData();
+                today.setDay("today");
+                today.setDescription(currentObservation.getString("weather"));
+                today.setTemperature(currentObservation.getString("temperature_string"));
+                this.weatherDataReference.setToday(today);
 
                 JSONObject forecastObject = weatherJSON.getJSONObject("forecast").getJSONObject("simpleforecast");
-                JSONArray forecast = forecastObject.getJSONArray("forecastday");
+                JSONArray forecastArray = forecastObject.getJSONArray("forecastday");
                 // First day in the array is today, we don't care about forecasting today's weather.
-                threeDayForecast = new JSONObject[] {
-                        forecast.getJSONObject(1),
-                        forecast.getJSONObject(2),
-                        forecast.getJSONObject(3)
-                };
+                WeatherDayData[] forecast = new WeatherDayData[3];
+                for (int i = 0; i < 3; i++) {
+                    WeatherDayData day = new WeatherDayData();
+                    JSONObject jsonDay = forecastArray.getJSONObject(i + 1);
+                    day.setDay(jsonDay.getJSONObject("date").getString("pretty"));
+                    day.setDescription(jsonDay.getString("conditions"));
+                    String fahrenheitTemperature = jsonDay.getJSONObject("low").getString("fahrenheit") +
+                            "/" + jsonDay.getJSONObject("high").getString("fahrenheit");
+                    String celsiusTemperature = jsonDay.getJSONObject("low").getString("celsius") +
+                            "/" + jsonDay.getJSONObject("high").getString("celsius");
+                    day.setTemperature(fahrenheitTemperature + " F (" + celsiusTemperature + " C)");
+
+                    forecast[i] = day;
+                }
+                this.weatherDataReference.setThreeDayForecast(forecast);
+
+
             } catch (JSONException ex) {
                 currentTemperature = weatherDescription = weatherLocation = "There has been an error";
                 findViewById(R.id.seeForecastButton).setVisibility(View.INVISIBLE);
                 ex.printStackTrace();
             }
             TextView currentLocationView = findViewById(R.id.currentLocation);
-            currentLocationView.setText(weatherLocation);
+            currentLocationView.setText(this.weatherDataReference.getLocation());
 
             TextView weatherDescriptionView = findViewById(R.id.currentDescription);
-            weatherDescriptionView.setText(weatherDescription);
+            weatherDescriptionView.setText(this.weatherDataReference.getToday().getDescription());
 
             TextView currentTemperatureView = findViewById(R.id.currentTemperature);
-            currentTemperatureView.setText(currentTemperature);
+            currentTemperatureView.setText(this.weatherDataReference.getToday().getTemperature());
         }
 
     }
