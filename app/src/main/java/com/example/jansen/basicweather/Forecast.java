@@ -16,12 +16,7 @@ public class Forecast extends AppCompatActivity {
         setContentView(R.layout.activity_forecast);
 
         Intent intent = getIntent();
-        //what are we doing here??
-        //TODO: Either implement these classes as parcelable, or store them and retrieve them in internal storage.
-//        WeatherDayData[] forecast = intent.getParcelableArrayExtra("forecast_data");
-//        try {
-//        } catch (JSONException ex)  {
-//
-//        }
+        WeatherDayData[] forecast = (WeatherDayData[]) intent.getParcelableArrayExtra("forecast_data");
+
     }
 }
