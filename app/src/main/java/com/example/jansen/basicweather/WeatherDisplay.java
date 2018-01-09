@@ -49,7 +49,7 @@ public class WeatherDisplay extends AppCompatActivity {
     }
 
     public void displayForecast(View view) {
-        Intent showForecast = new Intent(this, WeatherDisplay.class);
+        Intent showForecast = new Intent(this, Forecast.class);
         showForecast.putExtra("forecast_data", weatherData.getThreeDayForecast());
 
         startActivity(showForecast);
